@@ -30,10 +30,13 @@ export class TrainingService {
       }).subscribe((exercises: Exercise[]) => {
         this.availableExercises = exercises;
         this.exercisesChanged.next([...this.availableExercises]);
+    }, error => {
+        // console.log(error);
     });
   }
 
   startExercise(selectedId: string) {
+    // this.db.doc('availableExercises/' + selectedId).update({lastSelected: new Date()});
     this.runningExercise = this.availableExercises.find(ex => ex.id === selectedId);
     this.exerciseChanged.next({ ...this.runningExercise });
   }
@@ -70,7 +73,9 @@ export class TrainingService {
       .valueChanges()
       .subscribe((exercises: Exercise[]) => {
       this.finishedExercisesChanged.next(exercises);
-    });
+    }, error => {
+        // console.log(error);
+      });
   }
 
   private addDataToDatabase(exercise: Exercise) {
