@@ -11,18 +11,29 @@ import {Observable} from 'rxjs/Observable';
   styleUrls: ['./new-training.component.css']
 })
 export class NewTrainingComponent implements OnInit {
-  exercises: Observable<any>;
+  exercises: Observable<Exercise[]>;
 
   constructor(private trainingService: TrainingService, private db: AngularFirestore) { }
 
   ngOnInit() {
     this.exercises = this.db
       .collection('availableExercises')
-      .valueChanges();
+      .snapshotChanges()
+      .map(docArray => {
+        return docArray.map(doc => {
+          return {
+            id: doc.payload.doc.id,
+            name: doc.payload.doc.data().name,
+            duration: doc.payload.doc.data().duration,
+            calories: doc.payload.doc.data().calories
+          };
+        });
+      });
+
   }
 
   onStartTraining(form: NgForm) {
-    console.log("inside onStartTraining");
+    console.log('inside onStartTraining');
     this.trainingService.startExercise(form.value.exercise);
   }
 
