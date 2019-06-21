@@ -5,7 +5,7 @@ import { NgForm } from '@angular/forms';
 import * as fromTraining from '../training.reducer';
 import * as fromRoot from '../../app.reducer';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 
 @Component({

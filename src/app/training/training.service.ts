@@ -1,14 +1,13 @@
 import { Exercise } from './exercise.model';
-import { Subject } from 'rxjs/Subject';
+import { Subscription } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from 'angularfire2/firestore';
-import { Subscription } from 'rxjs/Subscription';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { UIService } from '../shared/ui.service';
 import { Store } from '@ngrx/store';
 import * as Training from './training.actions';
 import * as UI from '../shared/ui.actions';
 import * as fromTraining from '../training/training.reducer';
-import { take } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 
 
 @Injectable()
@@ -24,16 +23,16 @@ export class TrainingService {
     this.fbSubs.push(this.db
       .collection('availableExercises')
       .snapshotChanges()
-      .map(docArray => {
+      .pipe(map(docArray => {
         return docArray.map(doc => {
           return {
             id: doc.payload.doc.id,
-            name: doc.payload.doc.data().name,
-            duration: doc.payload.doc.data().duration,
-            calories: doc.payload.doc.data().calories
+            name: doc.payload.doc.data()['name'],
+            duration: doc.payload.doc.data()['duration'],
+            calories: doc.payload.doc.data()['calories']
           };
         });
-      }).subscribe((exercises: Exercise[]) => {
+      })).subscribe((exercises: Exercise[]) => {
         this.store.dispatch(new UI.StopLoading());
         this.store.dispatch(new Training.SetAvailableTrainings(exercises));
     }, error => {
